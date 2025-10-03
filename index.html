@@ -20,7 +20,7 @@
 
     <form name="atelier-clarte-coach-business" method="POST" data-netlify="true" enctype="multipart/form-data">
 
-        <input type="hidden" name="form-name" value="atelier-clarte-coach-business"/>
+        <input type="hidden" name="form-name" value="atelier-clarte-coach-business" />
 
 
     <!-- BOUTON POUR LE THÈME -->
@@ -373,9 +373,11 @@
                                 <div class="radio-group"><input type="radio" id="hero-choice-color" name="hero-visual-choice" value="color"><label for="hero-choice-color">Je préfère la simplicité et l'élégance d'un fond de couleur sobre.</label></div>
                                 
                                 <div id="hero-image-group" class="conditional-field-group">
-                                    <label for="hero-image-upload">Si vous avez choisi une image, veuillez l'uploader ici (format .jpg ou .png, haute résolution et de préférence horizontale) :</label>
+                                    <label for="hero-image-upload-input">Si vous avez choisi une image, veuillez l'uploader ici (format .jpg ou .png, haute résolution et de préférence horizontale) :</label>
                                     <div class="file-input-wrapper">
-                                        <input type="file" id="hero-image-upload" name="hero-image-upload" class="file-upload">
+                                        <input type="file" id="hero-image-upload-input" class="file-upload" data-cloudinary-field="hero-image-upload">
+                                        <input type="hidden" id="hero-image-upload" name="hero-image-upload">
+                                        <span class="upload-status" id="status-hero-image-upload"></span>
                                         <span class="file-status-icon"></span>
                                     </div>
                                 </div>
@@ -607,10 +609,12 @@
                         </div>
                         <div class="workshop-box">
                             <h5>✍️ Atelier de Sélection Visuelle : Votre Incarnation</h5>
-                            <label for="about-image-upload">Veuillez uploader ici la photo que vous souhaitez utiliser pour votre section "À Propos".</label>
+                            <label for="about-image-upload-input">Veuillez uploader ici la photo que vous souhaitez utiliser pour votre section "À Propos".</label>
                             <p class="instruction">Note : Idéalement un portrait vertical ou carré, de haute qualité.</p>
                             <div class="file-input-wrapper">
-                                <input type="file" id="about-image-upload" name="about-image-upload" class="file-upload">
+                                <input type="file" id="about-image-upload-input" class="file-upload" data-cloudinary-field="about-image-upload">
+                                <input type="hidden" id="about-image-upload" name="about-image-upload">
+                                <span class="upload-status" id="status-about-image-upload"></span>
                                 <span class="file-status-icon"></span>
                             </div>
                         </div>
@@ -1053,9 +1057,11 @@
                             <!-- Image 1 -->
                             <div class="workshop-part offer-block">
                                 <h6 class="part-title">IMAGE N°1 : L'ENVIRONNEMENT</h6>
-                                <label for="portfolio-1-image">1. L'Image : <span class="label-example">Uploadez ici la photo principale de votre espace (bureau, salle de réunion...).</span></label>
+                                <label for="portfolio-1-image-input">1. L'Image : <span class="label-example">Uploadez ici la photo principale de votre espace (bureau, salle de réunion...).</span></label>
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="portfolio-1-image" name="portfolio-1-image" class="file-upload">
+                                    <input type="file" id="portfolio-1-image-input" class="file-upload" data-cloudinary-field="portfolio-1-image">
+                                    <input type="hidden" id="portfolio-1-image" name="portfolio-1-image">
+                                    <span class="upload-status" id="status-portfolio-1-image"></span>
                                     <span class="file-status-icon"></span>
                                 </div>
                                 <label for="portfolio-1-title">2. Légende (Optionnel) : <span class="label-example">Ex: "Un espace de travail conçu pour la concentration et la stratégie."</span></label>
@@ -1065,9 +1071,11 @@
                             <!-- Image 2 -->
                             <div class="workshop-part offer-block">
                                 <h6 class="part-title">IMAGE N°2 : L'ACTION (Optionnel)</h6>
-                                <label for="portfolio-2-image">1. L'Image : <span class="label-example">Uploadez une photo de vous en situation professionnelle (conférence, atelier...).</span></label>
+                                <label for="portfolio-2-image-input">1. L'Image : <span class="label-example">Uploadez une photo de vous en situation professionnelle (conférence, atelier...).</span></label>
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="portfolio-2-image" name="portfolio-2-image" class="file-upload">
+                                    <input type="file" id="portfolio-2-image-input" class="file-upload" data-cloudinary-field="portfolio-2-image">
+                                    <input type="hidden" id="portfolio-2-image" name="portfolio-2-image">
+                                    <span class="upload-status" id="status-portfolio-2-image"></span>
                                     <span class="file-status-icon"></span>
                                 </div>
                                 <label for="portfolio-2-title">2. Légende (Optionnel) : <span class="label-example">Ex: "Atelier de leadership avec l'équipe de la société X."</span></label>
@@ -1077,9 +1085,11 @@
                             <!-- Image 3 -->
                             <div class="workshop-part offer-block">
                                 <h6 class="part-title">IMAGE N°3 : LE DÉTAIL (Optionnel)</h6>
-                                <label for="portfolio-3-image">1. L'Image : <span class="label-example">Uploadez une photo d'un détail qui évoque votre travail (livres, tableau blanc...).</span></label>
+                                <label for="portfolio-3-image-input">1. L'Image : <span class="label-example">Uploadez une photo d'un détail qui évoque votre travail (livres, tableau blanc...).</span></label>
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="portfolio-3-image" name="portfolio-3-image" class="file-upload">
+                                    <input type="file" id="portfolio-3-image-input" class="file-upload" data-cloudinary-field="portfolio-3-image">
+                                    <input type="hidden" id="portfolio-3-image" name="portfolio-3-image">
+                                    <span class="upload-status" id="status-portfolio-3-image"></span>
                                     <span class="file-status-icon"></span>
                                 </div>
                                 <label for="portfolio-3-title">2. Légende (Optionnel) : <span class="label-example">Ex: "Les outils de la réflexion stratégique."</span></label>
@@ -1223,9 +1233,11 @@
                                 <input type="text" id="testimonial-1-name" name="testimonial-1-name" placeholder="Ex: Jean Dupont">
                                 <label for="testimonial-1-title">3. Poste et Entreprise du Client :</label>
                                 <input type="text" id="testimonial-1-title" name="testimonial-1-title" placeholder="Ex: CEO, Acme Corp">
-                                <label for="testimonial-1-photo">4. Photo du Client (Optionnel, mais très puissant) :</label>
+                                <label for="testimonial-1-photo-input">4. Photo du Client (Optionnel, mais très puissant) :</label>
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="testimonial-1-photo" name="testimonial-1-photo" class="file-upload">
+                                    <input type="file" id="testimonial-1-photo-input" class="file-upload" data-cloudinary-field="testimonial-1-photo">
+                                    <input type="hidden" id="testimonial-1-photo" name="testimonial-1-photo">
+                                    <span class="upload-status" id="status-testimonial-1-photo"></span>
                                     <span class="file-status-icon"></span>
                                 </div>
                             </div>
@@ -1234,9 +1246,11 @@
                             <div class="offer-block" style="margin-bottom: 2rem;">
                                 <h6 class="part-title">TÉMOIGNAGE N°2 (Optionnel)</h6>
                                 <label for="testimonial-2-text">1. Texte Complet du Témoignage :</label><textarea id="testimonial-2-text" name="testimonial-2-text" rows="5" placeholder="Copiez-collez ici le texte..."></textarea>
-                                <label for="testimonial-2-name">2. Nom Complet :</label><input type="text" id="testimonial-2-name" name="testimonial-2-name" placeholder="Ex: Marie Durand"><label for="testimonial-2-title">3. Poste et Entreprise :</label><input type="text" id="testimonial-2-title" name="testimonial-2-title" placeholder="Ex: Directrice Marketing, Innovatech"><label for="testimonial-2-photo">4. Photo du Client :</label>
+                                <label for="testimonial-2-name">2. Nom Complet :</label><input type="text" id="testimonial-2-name" name="testimonial-2-name" placeholder="Ex: Marie Durand"><label for="testimonial-2-title">3. Poste et Entreprise :</label><input type="text" id="testimonial-2-title" name="testimonial-2-title" placeholder="Ex: Directrice Marketing, Innovatech"><label for="testimonial-2-photo-input">4. Photo du Client :</label>
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="testimonial-2-photo" name="testimonial-2-photo" class="file-upload">
+                                    <input type="file" id="testimonial-2-photo-input" class="file-upload" data-cloudinary-field="testimonial-2-photo">
+                                    <input type="hidden" id="testimonial-2-photo" name="testimonial-2-photo">
+                                    <span class="upload-status" id="status-testimonial-2-photo"></span>
                                     <span class="file-status-icon"></span>
                                 </div>
                             </div>
@@ -1245,9 +1259,11 @@
                             <div class="offer-block">
                                 <h6 class="part-title">TÉMOIGNAGE N°3 (Optionnel)</h6>
                                 <label for="testimonial-3-text">1. Texte Complet du Témoignage :</label><textarea id="testimonial-3-text" name="testimonial-3-text" rows="5" placeholder="Copiez-collez ici le texte..."></textarea>
-                                <label for="testimonial-3-name">2. Nom Complet :</label><input type="text" id="testimonial-3-name" name="testimonial-3-name" placeholder="Ex: Paul Martin"><label for="testimonial-3-title">3. Poste et Entreprise :</label><input type="text" id="testimonial-3-title" name="testimonial-3-title" placeholder="Ex: Manager, Solutions Pro"><label for="testimonial-3-photo">4. Photo du Client :</label>
+                                <label for="testimonial-3-name">2. Nom Complet :</label><input type="text" id="testimonial-3-name" name="testimonial-3-name" placeholder="Ex: Paul Martin"><label for="testimonial-3-title">3. Poste et Entreprise :</label><input type="text" id="testimonial-3-title" name="testimonial-3-title" placeholder="Ex: Manager, Solutions Pro"><label for="testimonial-3-photo-input">4. Photo du Client :</label>
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="testimonial-3-photo" name="testimonial-3-photo" class="file-upload">
+                                    <input type="file" id="testimonial-3-photo-input" class="file-upload" data-cloudinary-field="testimonial-3-photo">
+                                    <input type="hidden" id="testimonial-3-photo" name="testimonial-3-photo">
+                                    <span class="upload-status" id="status-testimonial-3-photo"></span>
                                     <span class="file-status-icon"></span>
                                 </div>
                             </div>
@@ -2431,6 +2447,5 @@
 
     <script src="script.js"></script>
 </body>
-
 
 </html>
