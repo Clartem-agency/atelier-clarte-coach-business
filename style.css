@@ -1,3 +1,5 @@
+/* --- START OF FILE style.css --- */
+
 /* --- VARIABLES & STYLES GLOBAUX --- */
 :root {
     --dark-blue: #19224F;
@@ -233,6 +235,8 @@ body {
     font-size: 1rem;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: none;
+    cursor: pointer;
 }
 
 .cta-button:hover,
@@ -511,6 +515,32 @@ body {
 }
 .file-status-icon.status-ok { color: var(--success-color); }
 .file-status-icon.status-warn { color: var(--warning-color); }
+.file-status-icon.status-error { color: var(--error-color); }
+
+
+/* --- NOUVEAU : STYLES POUR LE STATUT D'UPLOAD CLOUDINARY --- */
+.upload-status {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.upload-status.uploading {
+    color: var(--warning-color);
+    background-color: rgba(243, 156, 18, 0.1);
+}
+.upload-status.success {
+    color: var(--success-color);
+    background-color: rgba(46, 204, 113, 0.1);
+}
+.upload-status.error {
+    color: var(--error-color);
+    background-color: rgba(231, 76, 60, 0.1);
+}
+/* --- FIN DES NOUVEAUX STYLES --- */
 
 
 .synthesis-box {
@@ -1364,3 +1394,5 @@ html[data-theme="light"] .vertical-nav li.status-completed .nav-dot::before {
 @media print {
     .theme-switcher { display: none !important; }
 }
+
+/* --- END OF FILE style.css --- */
