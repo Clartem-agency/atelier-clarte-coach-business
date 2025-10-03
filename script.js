@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // =================================================================
     // --- NOUVEAU : GESTION DES UPLOADS CLOUDINARY ---
     // =================================================================
-    const CLOUDINARY_CLOUD_NAME = "VOTRE_CLOUD_NAME"; // <-- REMPLACEZ PAR VOTRE CLOUD NAME CLOUDINARY
-    const CLOUDINARY_UPLOAD_PRESET = "VOTRE_UPLOAD_PRESET"; // <-- REMPLACEZ PAR VOTRE UPLOAD PRESET (non signé)
+    const CLOUDINARY_CLOUD_NAME = "dbihs2rzm"; // <-- REMPLACEZ PAR VOTRE CLOUD NAME CLOUDINARY
+    const CLOUDINARY_UPLOAD_PRESET = "atelier-clarte-coach-business-upload"; // <-- REMPLACEZ PAR VOTRE UPLOAD PRESET (non signé)
     const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
     async function handleCloudinaryUpload(event) {
