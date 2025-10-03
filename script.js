@@ -1,3 +1,5 @@
+// --- START OF FILE script.js ---
+
 document.addEventListener('DOMContentLoaded', function () {
 
     // --- GESTION DU THÈME (LIGHT/DARK MODE) ---
@@ -47,6 +49,78 @@ document.addEventListener('DOMContentLoaded', function () {
         { id: 'section-15-conclusion', key: 'conclusion', name: 'Conclusion & Envoi', keyFields: [], isOptional: false }
     ];
 
+    // =================================================================
+    // --- NOUVEAU : GESTION DES UPLOADS CLOUDINARY ---
+    // =================================================================
+    const CLOUDINARY_CLOUD_NAME = "VOTRE_CLOUD_NAME"; // <-- REMPLACEZ PAR VOTRE CLOUD NAME CLOUDINARY
+    const CLOUDINARY_UPLOAD_PRESET = "VOTRE_UPLOAD_PRESET"; // <-- REMPLACEZ PAR VOTRE UPLOAD PRESET (non signé)
+    const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+    async function handleCloudinaryUpload(event) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const hiddenInputId = fileInput.dataset.cloudinaryField;
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const statusSpan = document.getElementById(`status-${hiddenInputId}`);
+
+        if (!hiddenInput || !statusSpan) {
+            console.error("Erreur : Champs cachés ou de statut non trouvés pour", fileInput.id);
+            return;
+        }
+
+        // Mettre à jour l'UI pour indiquer le début du téléversement
+        statusSpan.textContent = "Téléversement en cours...";
+        statusSpan.className = "upload-status uploading";
+        hiddenInput.value = ""; // Vider l'ancien lien
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        try {
+            const response = await fetch(CLOUDINARY_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Mettre à jour l'UI avec le succès
+            statusSpan.textContent = `✓ Fichier téléversé : ${file.name}`;
+            statusSpan.className = "upload-status success";
+            
+            // Mettre l'URL sécurisée dans le champ caché qui sera envoyé à Netlify
+            hiddenInput.value = data.secure_url;
+
+            // Déclencher manuellement un événement 'change' sur le champ caché pour que les résumés se mettent à jour
+            hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+            saveData(); // Sauvegarder les données après l'upload réussi
+
+        } catch (error) {
+            console.error("Erreur lors de l'upload sur Cloudinary:", error);
+            statusSpan.textContent = `✗ Échec du téléversement. Veuillez réessayer.`;
+            statusSpan.className = "upload-status error";
+            hiddenInput.value = "";
+        }
+    }
+
+    function setupCloudinaryListeners() {
+        const fileInputs = document.querySelectorAll('input[data-cloudinary-field]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', handleCloudinaryUpload);
+        });
+    }
+    // =================================================================
+    // --- FIN DE LA SECTION CLOUDINARY ---
+    // =================================================================
+
+
     function showSaveNotification() {
         const saveStatus = document.getElementById('save-status');
         if (!saveStatus) return;
@@ -65,8 +139,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (el.type === 'checkbox' || el.type === 'radio') {
                 data[id] = el.checked;
             } else if (el.type === 'file') {
-                // Correction: Sauvegarde une chaîne vide si aucun fichier n'est sélectionné
-                data[id] = el.files.length > 0 ? el.files[0].name : '';
+                // Pour les champs de type 'file', on sauvegarde le nom du fichier pour l'affichage au rechargement
+                // La valeur réelle (URL Cloudinary) est dans le champ caché et sera sauvegardée comme un champ normal
+                const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                const hiddenInputId = el.dataset.cloudinaryField;
+                if (hiddenInputId && savedData[hiddenInputId]) {
+                    // Si on a déjà une URL Cloudinary, on ne veut pas l'écraser avec le nom du fichier
+                } else if (el.files.length > 0) {
+                    data[id] = el.files[0].name;
+                }
             } else {
                 data[id] = el.value;
             }
@@ -85,15 +166,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (el.type === 'checkbox' || el.type === 'radio') {
                     el.checked = data[id];
                 } else if (el.type === 'file') {
-                    if (data[id]) {
-                        const infoSpan = document.createElement('span');
-                        infoSpan.className = 'file-reselect-info';
-                        infoSpan.textContent = `Fichier précédemment sélectionné : ${data[id]}. Veuillez le resélectionner pour l'envoi.`;
-                        const wrapper = el.closest('.file-input-wrapper');
-                        if (wrapper) {
-                            const oldInfo = wrapper.querySelector('.file-reselect-info');
-                            if (oldInfo) oldInfo.remove();
-                            wrapper.appendChild(infoSpan);
+                    const hiddenInputId = el.dataset.cloudinaryField;
+                    const hiddenInput = document.getElementById(hiddenInputId);
+                    const statusSpan = document.getElementById(`status-${hiddenInputId}`);
+
+                    // Si une URL Cloudinary est déjà sauvegardée pour ce champ
+                    if (hiddenInput && data[hiddenInputId]) {
+                        hiddenInput.value = data[hiddenInputId];
+                        if (statusSpan) {
+                            statusSpan.textContent = `✓ Fichier précédemment téléversé.`;
+                            statusSpan.className = "upload-status success";
                         }
                     }
                 } else {
@@ -128,7 +210,12 @@ document.addEventListener('DOMContentLoaded', function () {
         return sectionConfig.keyFields.every(fieldId => {
             const el = document.getElementById(fieldId);
             if (!el) return false;
-            if (el.type === 'file') return el.files.length > 0 || !!savedData[fieldId];
+            // MODIFICATION: Pour les fichiers, on vérifie le champ caché qui contient l'URL Cloudinary
+            if (el.dataset.cloudinaryField) {
+                const hiddenInputId = el.dataset.cloudinaryField;
+                const hiddenInput = document.getElementById(hiddenInputId);
+                return hiddenInput && hiddenInput.value.trim() !== '';
+            }
             if (el.type === 'radio' || el.type === 'checkbox') {
                 const groupName = el.name;
                 return !!document.querySelector(`input[name="${groupName}"]:checked`);
@@ -151,7 +238,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const filledFields = section.keyFields.filter(fieldId => {
             const el = document.getElementById(fieldId);
             if (!el) return false;
-            if (el.type === 'file') return el.files.length > 0;
+            if (el.dataset.cloudinaryField) {
+                const hiddenInputId = el.dataset.cloudinaryField;
+                const hiddenInput = document.getElementById(hiddenInputId);
+                return hiddenInput && hiddenInput.value.trim() !== '';
+            }
             if (el.type === 'radio' || el.type === 'checkbox') {
                 const groupName = el.name;
                 return !!document.querySelector(`input[name="${groupName}"]:checked`);
@@ -312,19 +403,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- GESTION DES ICÔNES DE STATUT DE FICHIER (UX) ---
     function updateFileStatusIcons() {
         const fileInputs = document.querySelectorAll('input[type="file"]');
-        const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
         fileInputs.forEach(input => {
-            const icon = input.nextElementSibling;
-            if (icon && icon.classList.contains('file-status-icon')) {
-                icon.textContent = '';
-                icon.className = 'file-status-icon';
-                if (input.files.length > 0) {
-                    icon.textContent = '✔';
-                    icon.classList.add('status-ok');
-                } else if (savedData[input.id]) {
-                    icon.textContent = '⚠';
-                    icon.classList.add('status-warn');
-                }
+            const icon = input.closest('.file-input-wrapper')?.querySelector('.file-status-icon');
+            if (!icon) return;
+
+            const hiddenInputId = input.dataset.cloudinaryField;
+            const hiddenInput = document.getElementById(hiddenInputId);
+            
+            icon.textContent = '';
+            icon.className = 'file-status-icon';
+
+            if (hiddenInput && hiddenInput.value) {
+                icon.textContent = '✔';
+                icon.classList.add('status-ok');
+            } else if (input.closest('.file-input-wrapper').querySelector('.uploading')) {
+                // Ne rien faire pendant l'upload pour ne pas perturber
+            } else if (input.closest('.file-input-wrapper').querySelector('.error')) {
+                icon.textContent = '✗';
+                icon.classList.add('status-error');
             }
         });
     }
@@ -360,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         function updateHeroVisualSummary() {
             const selectedRadio = document.querySelector('input[name="hero-visual-choice"]:checked');
-            const imageInput = document.getElementById('hero-image-upload');
+            const imageInput = document.getElementById('hero-image-upload'); // Le champ caché
             const colorInput = document.getElementById('hero-color-choice');
             const output = document.getElementById('summary-hero-visual');
             if (!output) return;
@@ -369,13 +465,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             if (selectedRadio.value === 'image') {
-                output.textContent = imageInput.files.length > 0 ? `Image fournie : ${imageInput.files[0].name}` : 'Image choisie (en attente)';
+                output.textContent = imageInput.value ? `Image fournie (URL)` : 'Image choisie (en attente)';
             } else {
                 output.textContent = `Fond de couleur : ${colorInput.value || 'Non spécifié'}`;
             }
         }
         document.querySelectorAll('input[name="hero-visual-choice"], #hero-image-upload, #hero-color-choice').forEach(el => {
-            const event = (el.type === 'file' || el.type === 'radio') ? 'change' : 'input';
+            const event = (el.type === 'hidden' || el.type === 'radio') ? 'change' : 'input';
             el.addEventListener(event, updateHeroVisualSummary);
         });
         updateHeroVisualSummary();
@@ -385,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setupSync('about-story-final', 'summary-about-story');
         document.getElementById('about-image-upload').addEventListener('change', function() {
             const output = document.getElementById('summary-about-image');
-            output.textContent = this.files.length > 0 ? `Fichier fourni : ${this.files[0].name}` : '';
+            output.textContent = this.value ? `Fichier fourni (URL)` : '';
         });
 
         // Section 3: Services
@@ -451,9 +547,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 for (let i = 1; i <= 3; i++) {
                     const imageInput = document.getElementById(`portfolio-${i}-image`);
                     const legendInput = document.getElementById(`portfolio-${i}-title`);
-                    if (imageInput?.files.length > 0) {
+                    if (imageInput?.value) {
                         hasContent = true;
-                        let text = `Image ${i}: ${imageInput.files[0].name}`;
+                        let text = `Image ${i}: Fournie (URL)`;
                         if (legendInput?.value.trim()) text += `\n- Légende: ${legendInput.value.trim()}`;
                         images.push(text);
                     }
@@ -483,8 +579,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 summaryRow.style.display = 'table-row';
                 const title = document.getElementById(`testimonial-${num}-title`).value.trim();
-                const photo = document.getElementById(`testimonial-${num}-photo`).files;
-                summaryOutput.innerText = `De : ${name} (${title})\nTexte : "${text}"\nPhoto : ${photo.length > 0 ? photo[0].name : 'Non fournie'}`;
+                const photo = document.getElementById(`testimonial-${num}-photo`);
+                summaryOutput.innerText = `De : ${name} (${title})\nTexte : "${text}"\nPhoto : ${photo.value ? 'Fournie (URL)' : 'Non fournie'}`;
             }
             [`testimonial-${num}-text`, `testimonial-${num}-name`, `testimonial-${num}-title`].forEach(id => document.getElementById(id).addEventListener('input', update));
             document.getElementById(`testimonial-${num}-photo`).addEventListener('change', update);
@@ -659,13 +755,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             function update() {
-                const choice = document.querySelector('input[name="architecture-plan-choice"]:checked')?.value;
+                const choice = document.querySelector('input[name="architecture-plan"]:checked')?.value;
                 customContainer.style.display = choice === 'Custom' ? 'block' : 'none';
                 let planText = '', orderText = '';
-                if (choice === 'B') {
+                if (choice === 'Plan A - Expertise') {
                     planText = 'Plan A : Le Parcours de l\'Expertise';
                     orderText = getOrderString(['about', 'services', 'approach', 'testimonials', 'faq', 'blog', 'leadmagnet', 'booking']);
-                } else if (choice === 'C') {
+                } else if (choice === 'Plan B - Preuve Sociale') {
                     planText = 'Plan B : Le Parcours de la Preuve Sociale';
                     orderText = getOrderString(['testimonials', 'about', 'services', 'approach', 'blog', 'leadmagnet', 'booking']);
                 } else if (choice === 'Custom') {
@@ -679,7 +775,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 summaryPlan.textContent = planText;
                 summaryOrder.innerText = orderText;
             }
-            document.querySelectorAll('input[name="architecture-plan-choice"], .custom-order-container input').forEach(el => {
+            document.querySelectorAll('input[name="architecture-plan"], .custom-order-container input').forEach(el => {
                 const event = el.type === 'radio' ? 'change' : 'input';
                 el.addEventListener(event, update);
             });
@@ -693,6 +789,7 @@ document.addEventListener('DOMContentLoaded', function () {
         allFormElements = Array.from(document.querySelectorAll('input, textarea'));
         loadData();
         
+        setupCloudinaryListeners(); // Ajout de l'initialisation des listeners Cloudinary
         initializeProgressTracker();
         initializeVerticalNav();
         setupVerticalNavObserver();
@@ -701,11 +798,14 @@ document.addEventListener('DOMContentLoaded', function () {
         setupOptionalSections();
         
         allFormElements.forEach(input => {
-            const eventType = (input.type === 'radio' || input.type === 'checkbox' || input.type === 'file') ? 'change' : 'input';
-            input.addEventListener(eventType, () => {
-                saveData();
-                updateAllProgressVisuals();
-            });
+            // On ne veut pas que le 'change' des file inputs déclenche la sauvegarde, car c'est géré par la fonction d'upload
+            if (input.type !== 'file') {
+                const eventType = (input.type === 'radio' || input.type === 'checkbox') ? 'change' : 'input';
+                input.addEventListener(eventType, () => {
+                    saveData();
+                    updateAllProgressVisuals();
+                });
+            }
         });
         
         document.getElementById('clear-data-button')?.addEventListener('click', clearData);
@@ -734,7 +834,7 @@ document.addEventListener('DOMContentLoaded', function () {
             subtitle1: getValue('hero-subtitle-1'), 
             cta1: getValue('hero-cta-primary'), 
             visualType: getRadioValue('hero-visual-choice'), 
-            imageFile: getFileName('hero-image-upload'), 
+            imageFile: getValue('hero-image-upload'), // On prend la valeur du champ caché
             color: getValue('hero-color-choice'),
             strategy: {
                 client: getValue('q1-client'),
@@ -743,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 unique: getValue('q4-unique')
             }
         };
-        data.about = { title: getValue('about-title-final'), story: getValue('about-story-final'), imageFile: getFileName('about-image-upload') };
+        data.about = { title: getValue('about-title-final'), story: getValue('about-story-final'), imageFile: getValue('about-image-upload') };
         data.services = { title: getValue('services-title-final'), offers: [] };
         for (let i = 1; i <= 3; i++) {
             const name = getValue(`service-${i}-name`);
@@ -756,13 +856,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         data.portfolio = { title: getValue('portfolio-title-final'), images: [] };
         for (let i = 1; i <= 3; i++) {
-            const imageFile = getFileName(`portfolio-${i}-image`);
+            const imageFile = getValue(`portfolio-${i}-image`);
             if (imageFile) data.portfolio.images.push({ file: imageFile, legend: getValue(`portfolio-${i}-title`) });
         }
         data.testimonials = { title: getValue('testimonials-title-final'), list: [] };
         for (let i = 1; i <= 3; i++) {
             const name = getValue(`testimonial-${i}-name`);
-            if (name) data.testimonials.list.push({ name, title: getValue(`testimonial-${i}-title`), text: getValue(`testimonial-${i}-text`), photoFile: getFileName(`testimonial-${i}-photo`) });
+            if (name) data.testimonials.list.push({ name, title: getValue(`testimonial-${i}-title`), text: getValue(`testimonial-${i}-text`), photoFile: getValue(`testimonial-${i}-photo`) });
         }
         data.faq = { title: getValue('faq-title-final'), pairs: [] };
         for (let i = 1; i <= 4; i++) {
@@ -774,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function () {
         data.leadmagnet = { enabled: !document.getElementById('toggle-section-9-na')?.checked, brainstorm: leadMagnetIdeas, format: getValue('leadmagnet-format'), title: getValue('leadmagnet-title'), subtitle: getValue('leadmagnet-subtitle') };
         data.booking = { title: getValue('booking-title-final'), subtitle: getValue('booking-subtitle-final'), event: { name: getValue('booking-event-name'), duration: getValue('booking-event-duration'), description: getValue('booking-event-description'), questions: [getValue('booking-q1'), getValue('booking-q2')].filter(Boolean) } };
         data.contact = { title: getValue('contact-title-final'), intro: getValue('contact-intro-text'), formEmail: getValue('contact-reception-email'), formConfirm: getValue('contact-confirm-message'), details: { address: getValue('contact-address'), phone: getValue('contact-phone'), email: getValue('contact-email'), hours: getValue('contact-hours') }, socials: { linkedin: getValue('contact-social-linkedin'), twitter: getValue('contact-social-twitter') }, map: { enabled: getRadioValue('contact-map-choice') === 'yes', address: getValue('contact-map-address'), transport: getValue('contact-access-transport'), parking: getValue('contact-access-parking'), details: getValue('contact-access-details'), pmr: getValue('contact-access-pmr') } };
-        data.architecture = { plan: getRadioValue('architecture-plan-choice') };
+        data.architecture = { plan: getRadioValue('architecture-plan') };
         return data;
     }
 
@@ -794,12 +894,12 @@ document.addEventListener('DOMContentLoaded', function () {
             ${generateField('Approche Unique', data.hero.strategy.unique)}`;
 
         reportHTML += `<div class="report-section"><h2>Section 1 : Héros</h2>${generateField('Titre', data.hero.title1)}${generateField('Sous-titre', data.hero.subtitle1)}${generateField('Bouton', data.hero.cta1)}${heroStrategyHTML}</div>`;
-        reportHTML += `<div class="report-section"><h2>Section 2 : À Propos</h2>${generateField('Titre', data.about.title)}${generateField('Récit', data.about.story)}${generateField('Image', data.about.imageFile)}</div>`;
+        reportHTML += `<div class="report-section"><h2>Section 2 : À Propos</h2>${generateField('Titre', data.about.title)}${generateField('Récit', data.about.story)}${generateField('Image (URL)', data.about.imageFile)}</div>`;
         let servicesHTML = data.services.offers.map((o, i) => `<h3>Service ${i+1}</h3>${generateField('Nom', o.name)}${generateField('Description', o.description)}${generateField('Prix/Format', o.price)}`).join('');
         reportHTML += `<div class="report-section"><h2>Section 3 : Services</h2>${generateField('Titre', data.services.title)}${servicesHTML}</div>`;
         let approachHTML = data.approach.steps.map((s, i) => `<h3>Étape ${i+1}</h3>${generateField('Titre', s.title)}${generateField('Description', s.description)}`).join('');
         reportHTML += `<div class="report-section"><h2>Section 4 : Mon Approche</h2>${generateField('Titre', data.approach.title)}${generateField('Intro', data.approach.intro)}${approachHTML}</div>`;
-        let portfolioHTML = data.portfolio.images.map((img, i) => `<h3>Image ${i+1}</h3>${generateField('Fichier', img.file)}${generateField('Légende', img.legend)}`).join('');
+        let portfolioHTML = data.portfolio.images.map((img, i) => `<h3>Image ${i+1}</h3>${generateField('Fichier (URL)', img.file)}${generateField('Légende', img.legend)}`).join('');
         reportHTML += `<div class="report-section"><h2>Section 5 : Environnement</h2>${generateField('Titre', data.portfolio.title)}${portfolioHTML}</div>`;
         let testimonialsHTML = data.testimonials.list.map((t, i) => `<h3>Témoignage ${i+1}</h3>${generateField('Nom', `${t.name} (${t.title})`)}${generateField('Texte', t.text)}`).join('');
         reportHTML += `<div class="report-section"><h2>Section 6 : Témoignages</h2>${generateField('Titre', data.testimonials.title)}${testimonialsHTML}</div>`;
@@ -813,7 +913,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let contactDetailsHTML = `${generateField('Adresse', data.contact.details.address)}${generateField('Téléphone', data.contact.details.phone)}${generateField('Email', data.contact.details.email)}${generateField('Horaires', data.contact.details.hours)}`;
         let mapDetailsHTML = data.contact.map.enabled ? `${generateField('Adresse sur carte', data.contact.map.address)}${generateField('Transports', data.contact.map.transport)}${generateField('Parking', data.contact.map.parking)}${generateField('Détails d\'accès', data.contact.map.details)}${generateField('Accessibilité PMR', data.contact.map.pmr)}` : generateField('Carte affichée', 'Non');
         reportHTML += `<div class="report-section"><h2>Section 11 : Contact</h2>${generateField('Titre', data.contact.title)}${generateField('Intro', data.contact.intro)}${generateField('Email de réception', data.contact.formEmail)}${contactDetailsHTML}${mapDetailsHTML}</div>`;
-        reportHTML += `<div class="report-section"><h2>Section 12 : Architecture</h2>${generateField('Plan choisi', data.architecture.plan === 'B' ? 'Plan A: Le Parcours de l\'Expertise' : (data.architecture.plan === 'C' ? 'Plan B: Le Parcours de la Preuve Sociale' : 'Plan Personnalisé'))}</div>`;
+        reportHTML += `<div class="report-section"><h2>Section 12 : Architecture</h2>${generateField('Plan choisi', data.architecture.plan === 'Plan A - Expertise' ? 'Plan A: Le Parcours de l\'Expertise' : (data.architecture.plan === 'Plan B - Preuve Sociale' ? 'Plan B: Le Parcours de la Preuve Sociale' : 'Plan Personnalisé'))}</div>`;
 
         const finalPageHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport de Synthèse - Briefing Clartem</title><style>.report-body{font-family:'Georgia',serif;line-height:1.6;color:#333;padding:2rem;max-width:800px;margin:auto}.report-header{text-align:center;border-bottom:2px solid #eee;padding-bottom:1rem;margin-bottom:2rem}.report-header h1{color:#19224F}.report-section{margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid #eee}.report-section h2{color:#19224F}.report-section h3{font-size:1.2rem;color:#333;margin-top:1.5rem;margin-bottom:1rem}.report-field{margin-bottom:1.2rem}.report-field strong{display:block;color:#555}.report-field .value{background:#f9f9f9;padding:.8rem;border-radius:4px;border-left:3px solid #3498DB;white-space:pre-wrap;word-wrap:break-word} .report-field .value ul{margin:0;padding-left:20px} .report-field .value.empty{color:#999;font-style:italic;border-left-color:#ccc;} @media print{.report-body{box-shadow:none;margin:0;max-width:100%}}</style></head><body class="report-body"><header class="report-header"><h1>Rapport de Synthèse du Briefing</h1><p>Préparé pour : ${data.client.name || 'N/A'} - Le ${data.client.date || new Date().toLocaleDateString('fr-FR')}</p></header><main>${reportHTML}</main><script>window.onload=window.print</script></body></html>`;
         const reportWindow = window.open('', '_blank');
@@ -824,3 +924,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- DÉMARRAGE ---
     initializeApp();
 });
+
+// --- END OF FILE script.js ---
