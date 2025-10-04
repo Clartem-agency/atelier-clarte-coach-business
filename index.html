@@ -18,68 +18,70 @@
 
 <body>
 
-
-
-<!-- BOUTON POUR LE THÈME -->
+    <!-- BOUTON POUR LE THÈME -->
     <button id="theme-switcher" class="theme-switcher" aria-label="Changer le thème">
         <span class="sun-icon" aria-hidden="true">☀️</span>
         <span class="moon-icon" aria-hidden="true">🌙</span>
     </button>
     
-
     <form name="atelier-clarte-coach-business" method="POST" data-netlify="true" enctype="multipart/form-data">
-
         <input type="hidden" name="form-name" value="atelier-clarte-coach-business" />
-
-
     
+        <nav id="vertical-nav" class="vertical-nav"></nav>
 
-    <nav id="vertical-nav" class="vertical-nav"></nav>
-
-    <div class="container">
-        <!-- EN-TÊTE AVEC LE LOGO -->
-        <header class="site-header">
-            <img src="https://i.ibb.co/bXj0Z3D/logo-horizontal-cream.png"
-                alt="Logo Clartem - Création de sites web pour coachs, consultants et formateurs" class="logo">
-        </header>
-
-        <main>
+        <div class="container">
+            <!-- ================================================================= -->
+            <!-- MODIFICATION : L'EN-TÊTE EST MAINTENANT INTÉGRÉ À LA PAGE DE GARDE -->
+            <!-- ================================================================= -->
             
             <!-- SECTION D'ACCUEIL (COVER PAGE) -->
             <section class="page-section cover-page">
-                <div class="cover-content">
-                    <h1 class="main-title">Bienvenue dans Votre Atelier de Clarté</h1>
-                    <p class="subtitle">Le parcours stratégique pour bâtir votre plateforme d'expertise, un site qui inspire la confiance et génère des opportunités.</p>
+                <!-- NOUVEAU CONTENEUR POUR UNIFIER LE STYLE -->
+                <div class="hero-container">
+                    <!-- EN-TÊTE AVEC LE LOGO (MAINTENANT ICI) -->
+                    <header class="site-header">
+                        <img src="https://i.ibb.co/bXj0Z3D/logo-horizontal-cream.png"
+                            alt="Logo Clartem - Création de sites web pour coachs, consultants et formateurs" class="logo">
+                    </header>
 
-                    <div class="client-info">
-                        <div class="info-item">
-                            <span>Préparé pour</span>
-                            <input type="text" id="client-name-input" name="client-name" class="personalization-input" placeholder="Votre Nom Complet">
-                        </div>
-                        <div class="info-item">
-                            <span>Date de l'atelier</span>
-                            <input type="text" id="client-date-input" name="client-date" class="personalization-input" placeholder="Date du Jour">
+                    <div class="cover-content">
+                        <h1 class="main-title">Bienvenue dans Votre Atelier de Clarté</h1>
+                        <p class="subtitle">Le parcours stratégique pour bâtir votre plateforme d'expertise, un site qui inspire la confiance et génère des opportunités.</p>
+
+                        <div class="client-info">
+                            <div class="info-item">
+                                <span>Préparé pour</span>
+                                <input type="text" id="client-name-input" name="client-name" class="personalization-input" placeholder="Votre Nom Complet">
+                            </div>
+                            <div class="info-item">
+                                <span>Date de l'atelier</span>
+                                <input type="text" id="client-date-input" name="client-date" class="personalization-input" placeholder="Date du Jour">
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-
-            <!-- SECTION D'INTRODUCTION -->
-            <section class="page-section introduction-page">
-                <div class="intro-grid">
-                    <div class="intro-left">
-                        <h2 class="section-title">Bienvenue dans votre atelier.</h2>
-                        <p class="intro-paragraph">Bonjour <strong id="client-name-display">[Nom du Client]</strong>, et félicitations ! Vous avez initié la démarche décisive pour construire votre camp de base digital : un site web qui incarne la valeur et le professionnalisme de votre expertise.</p>
-                        <p class="intro-paragraph">Ce guide est la première étape de notre collaboration. Il est conçu pour être structuré, efficace et, surtout, pour vous aider à articuler la proposition de valeur qui vous rend unique.</p>
-                    </div>
-                    <div class="intro-right">
-                        <div class="purpose-box">
-                            <h3>Quel est le but de cet atelier ?</h3>
-                            <p>Ce guide est un outil de co-création pour transformer votre vision en un site web qui vous positionne comme une autorité dans votre domaine. En le remplissant, vous ne nous donnez pas seulement du contenu ; vous posez les <strong>fondations d'une machine à confiance</strong> pour vos futurs clients. Votre implication est la clé d'un projet à fort impact.</p>
+            <main>
+                <!-- SECTION D'INTRODUCTION -->
+                <section class="page-section introduction-page">
+                    <div class="intro-grid">
+                        <div class="intro-left">
+                            <h2 class="section-title">Bienvenue dans votre atelier.</h2>
+                            <p class="intro-paragraph">Bonjour <strong id="client-name-display">[Nom du Client]</strong>, et félicitations ! Vous avez initié la démarche décisive pour construire votre camp de base digital : un site web qui incarne la valeur et le professionnalisme de votre expertise.</p>
+                            <p class="intro-paragraph">Ce guide est la première étape de notre collaboration. Il est conçu pour être structuré, efficace et, surtout, pour vous aider à articuler la proposition de valeur qui vous rend unique.</p>
+                        </div>
+                        <div class="intro-right">
+                            <div class="purpose-box">
+                                <h3>Quel est le but de cet atelier ?</h3>
+                                <p>Ce guide est un outil de co-création pour transformer votre vision en un site web qui vous positionne comme une autorité dans votre domaine. En le remplissant, vous ne nous donnez pas seulement du contenu ; vous posez les <strong>fondations d'une machine à confiance</strong> pour vos futurs clients. Votre implication est la clé d'un projet à fort impact.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+
+
+
 
                 <!-- ENCART : CIBLE DU GUIDE -->
                 <div class="target-audience-box">
