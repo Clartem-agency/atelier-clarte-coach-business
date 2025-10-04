@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     // =================================================================
-    // --- NOUVEAU : GESTION DES UPLOADS CLOUDINARY ---
+    // --- GESTION DES UPLOADS CLOUDINARY ---
     // =================================================================
     const CLOUDINARY_CLOUD_NAME = "dbihs2rzm"; // <-- REMPLACEZ PAR VOTRE CLOUD NAME CLOUDINARY
     const CLOUDINARY_UPLOAD_PRESET = "atelier-clarte-coach-business-upload"; // <-- REMPLACEZ PAR VOTRE UPLOAD PRESET (non signé)
@@ -784,18 +784,107 @@ document.addEventListener('DOMContentLoaded', function () {
         setupArchitectureSync();
     }
 
+    // =================================================================
+    // --- NOUVEAU : GESTION DE LA LIGHTBOX ---
+    // =================================================================
+    function setupLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        if (!lightbox) return;
+
+        const lightboxImage = lightbox.querySelector('.lightbox-image');
+        const closeButton = lightbox.querySelector('.lightbox-close');
+        const prevButton = lightbox.querySelector('.lightbox-prev');
+        const nextButton = lightbox.querySelector('.lightbox-next');
+        const counter = lightbox.querySelector('.lightbox-counter');
+
+        let currentGalleryImages = [];
+        let currentIndex = 0;
+
+        function showImage(index) {
+            const imgElement = currentGalleryImages[index];
+            if (!imgElement) return;
+
+            lightboxImage.src = imgElement.src;
+            currentIndex = index;
+            counter.textContent = `${currentIndex + 1} / ${currentGalleryImages.length}`;
+
+            // Gérer la visibilité des boutons de navigation
+            prevButton.style.display = (currentIndex > 0) ? 'block' : 'none';
+            nextButton.style.display = (currentIndex < currentGalleryImages.length - 1) ? 'block' : 'none';
+        }
+
+        function openLightbox(e) {
+            const clickedImage = e.target;
+            const galleryName = clickedImage.dataset.gallery;
+            if (!galleryName) return;
+
+            // Récupérer toutes les images de la même galerie
+            currentGalleryImages = Array.from(document.querySelectorAll(`img[data-gallery="${galleryName}"]`));
+            currentIndex = currentGalleryImages.indexOf(clickedImage);
+
+            if (currentIndex === -1) return;
+
+            lightbox.classList.add('active');
+            showImage(currentIndex);
+            document.addEventListener('keydown', handleKeydown);
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.removeEventListener('keydown', handleKeydown);
+        }
+
+        function showNext() {
+            if (currentIndex < currentGalleryImages.length - 1) {
+                showImage(currentIndex + 1);
+            }
+        }
+
+        function showPrev() {
+            if (currentIndex > 0) {
+                showImage(currentIndex - 1);
+            }
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') showNext();
+            if (e.key === 'ArrowLeft') showPrev();
+        }
+
+        // Écouteur d'événement principal sur le document pour les images de galerie
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('img[data-gallery]')) {
+                openLightbox(e);
+            }
+        });
+
+        // Écouteurs pour les contrôles de la lightbox
+        closeButton.addEventListener('click', closeLightbox);
+        prevButton.addEventListener('click', showPrev);
+        nextButton.addEventListener('click', showNext);
+        lightbox.addEventListener('click', function(e) {
+            // Fermer si on clique sur le fond, mais pas sur l'image ou les boutons
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+
+
     // --- FONCTION D'INITIALISATION GLOBALE ---
     function initializeApp() {
         allFormElements = Array.from(document.querySelectorAll('input, textarea'));
         loadData();
         
-        setupCloudinaryListeners(); // Ajout de l'initialisation des listeners Cloudinary
+        setupCloudinaryListeners();
         initializeProgressTracker();
         initializeVerticalNav();
         setupVerticalNavObserver();
         setupConditionalFields();
         setupPersonalization();
         setupOptionalSections();
+        setupLightbox(); // Ajout de l'initialisation de la lightbox
         
         allFormElements.forEach(input => {
             // On ne veut pas que le 'change' des file inputs déclenche la sauvegarde, car c'est géré par la fonction d'upload
@@ -924,5 +1013,3 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- DÉMARRAGE ---
     initializeApp();
 });
-
-// --- END OF FILE script.js ---

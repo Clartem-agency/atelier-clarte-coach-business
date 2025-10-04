@@ -331,20 +331,33 @@
                         <h4 class="element-title">Étape 3 : L'Identité Visuelle (L'Ambiance)</h4>
                         <p class="element-description">L'émotion passe avant les mots. L'arrière-plan de votre section Héros doit instantanément communiquer votre professionnalisme, votre modernité et votre approche, tout en permettant à votre message d'être parfaitement lisible.</p>
 
+                        <!-- ================================================================= -->
+                        <!-- MODIFICATION : LA GALERIE D'IMAGES EST MAINTENANT INTERACTIVE -->
+                        <!-- ================================================================= -->
                         <div class="inspiration-container">
                             <h4 class="inspiration-title">Quelques ambiances pour vous inspirer</h4>
                             <div class="inspiration-gallery">
                                 <figure class="inspiration-item">
-                                    <img src="https://i.ibb.co/wzW4bQz/hero-corporate-1.jpg" alt="Exemple de section héros avec une photo professionnelle d'un coach ou consultant">
+                                    <img src="https://i.ibb.co/wzW4bQz/hero-corporate-1.jpg" alt="Exemple de section héros avec une photo professionnelle d'un coach" data-gallery="hero-style-1">
+                                    <img src="https://i.ibb.co/Q8yB4y3/hero-corporate-1-alt1.jpg" alt="Portrait alternatif d'un consultant" data-gallery="hero-style-1" style="display:none;">
+                                    <img src="https://i.ibb.co/yqgJm0g/hero-corporate-1-alt2.jpg" alt="Coach en session de travail" data-gallery="hero-style-1" style="display:none;">
                                     <figcaption><strong>Style "Humain / Authentique" :</strong> Un portrait professionnel de vous, en action ou regardant l'objectif. Crée une connexion immédiate et incarne votre expertise.</figcaption>
                                 </figure>
                                 <figure class="inspiration-item">
-                                    <img src="https://i.ibb.co/F8g0GzG/hero-corporate-2.jpg" alt="Exemple de section héros avec une photo d'un bureau moderne et épuré">
+                                    <img src="https://i.ibb.co/F8g0GzG/hero-corporate-2.jpg" alt="Exemple de section héros avec une photo d'un bureau moderne" data-gallery="hero-style-2">
+                                    <img src="https://i.ibb.co/yYv3C0b/hero-corporate-2-alt1.jpg" alt="Salle de réunion épurée" data-gallery="hero-style-2" style="display:none;">
+                                    <img src="https://i.ibb.co/YtN72Jg/hero-corporate-2-alt2.jpg" alt="Espace de travail collaboratif" data-gallery="hero-style-2" style="display:none;">
                                     <figcaption><strong>Style "Professionnel / Bureau" :</strong> Une photo de votre environnement de travail (bureau, salle de réunion) pour projeter une image de sérieux et de structure.</figcaption>
                                 </figure>
                                 <figure class="inspiration-item">
-                                    <img src="https://i.ibb.co/V95wG3J/hero-example-3.jpg" alt="Exemple de section héros minimaliste avec un fond de couleur et une grande typographie">
+                                    <img src="https://i.ibb.co/V95wG3J/hero-example-3.jpg" alt="Exemple de section héros minimaliste avec un fond de couleur" data-gallery="hero-style-3">
                                     <figcaption><strong>Style "Minimaliste / Épuré" :</strong> Pas d'image, toute la puissance est dans le message et les couleurs sobres pour un impact direct et sophistiqué.</figcaption>
+                                </figure>
+                                <figure class="inspiration-item">
+                                    <img src="https://i.ibb.co/gZ7t0bM/hero-nature-1.jpg" alt="Exemple de section héros avec un fond nature" data-gallery="hero-style-4">
+                                    <img src="https://i.ibb.co/yW1fC8c/hero-nature-2.jpg" alt="Fond nature alternatif" data-gallery="hero-style-4" style="display:none;">
+                                    <img src="https://i.ibb.co/YtK3v3q/hero-nature-3.jpg" alt="Troisième exemple de fond nature" data-gallery="hero-style-4" style="display:none;">
+                                    <figcaption><strong>Style "Nature / Organique" :</strong> Idéal pour les coachs en bien-être ou les approches centrées sur la croissance personnelle, évoque le calme et l'équilibre.</figcaption>
                                 </figure>
                             </div>
                         </div>
@@ -2451,6 +2464,21 @@
     </div>
 
     </form>
+
+    <!-- ================================================================= -->
+    <!-- NOUVEAU : STRUCTURE HTML POUR LA LIGHTBOX -->
+    <!-- ================================================================= -->
+    <div id="lightbox" class="lightbox">
+        <button class="lightbox-close" aria-label="Fermer">&times;</button>
+        <button class="lightbox-prev" aria-label="Image précédente">&#10094;</button>
+        <button class="lightbox-next" aria-label="Image suivante">&#10095;</button>
+        <div class="lightbox-content">
+            <img src="" alt="Image agrandie" class="lightbox-image">
+            <div class="lightbox-info">
+                <span class="lightbox-counter"></span>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
