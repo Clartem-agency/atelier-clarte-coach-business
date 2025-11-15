@@ -1,5 +1,3 @@
-// --- START OF FILE script.js ---
-
 document.addEventListener('DOMContentLoaded', function () {
 
     // --- GESTION DU THÈME (LIGHT/DARK MODE) ---
@@ -34,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- CONFIGURATION CENTRALE DES SECTIONS ---
     const SECTIONS_CONFIG = [
+        { id: 'section-0-foundations', key: 'foundations', name: 'Fondations : Votre Nom', keyFields: ['domain-choice-final'], isOptional: false },
         { id: 'section-1-hero', key: 'hero', name: 'Héros : Proposition de Valeur', keyFields: ['hero-title-1', 'hero-cta-primary'], isOptional: false },
         { id: 'section-2-about', key: 'about', name: 'À Propos : Votre Expertise', keyFields: ['about-title-final', 'about-story-final'], isOptional: false },
         { id: 'section-3-services', key: 'services', name: 'Services : Vos Solutions', keyFields: ['services-title-final', 'service-1-name'], isOptional: false },
@@ -446,6 +445,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function initializeSummaries() {
+        // Section Fondations
+        setupSync('domain-choice-final', 'summary-domain-choice');
+
         // Section 1: Héros
         setupSync('hero-title-1', 'summary-hero-title-1');
         setupSync('hero-subtitle-1', 'summary-hero-subtitle-1');
@@ -918,6 +920,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const getRadioValue = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || '';
 
         data.client = { name: getValue('client-name-input'), date: getValue('client-date-input') };
+        data.domain = { choice: getValue('domain-choice-final') };
         data.hero = { 
             title1: getValue('hero-title-1'), 
             subtitle1: getValue('hero-subtitle-1'), 
@@ -982,6 +985,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ${generateField('Transformation / Résultat', data.hero.strategy.solution)}
             ${generateField('Approche Unique', data.hero.strategy.unique)}`;
 
+        reportHTML += `<div class="report-section"><h2>Fondations : Votre Nom sur le Web</h2>${generateField('Nom de Domaine Final', data.domain.choice)}</div>`;
         reportHTML += `<div class="report-section"><h2>Section 1 : Héros</h2>${generateField('Titre', data.hero.title1)}${generateField('Sous-titre', data.hero.subtitle1)}${generateField('Bouton', data.hero.cta1)}${heroStrategyHTML}</div>`;
         reportHTML += `<div class="report-section"><h2>Section 2 : À Propos</h2>${generateField('Titre', data.about.title)}${generateField('Récit', data.about.story)}${generateField('Image (URL)', data.about.imageFile)}</div>`;
         let servicesHTML = data.services.offers.map((o, i) => `<h3>Service ${i+1}</h3>${generateField('Nom', o.name)}${generateField('Description', o.description)}${generateField('Prix/Format', o.price)}`).join('');
