@@ -1579,3 +1579,35 @@ html[data-theme="light"] .vertical-nav li.status-completed .nav-dot::before {
     font-size: 0.9rem;
     white-space: nowrap;
 }
+
+
+
+
+
+/* ======================================================= */
+/*                   BOÎTES JURIDIQUES                       */
+/* ======================================================= */
+
+.tip-box.legal {
+    background-color: rgba(243, 156, 18, 0.15);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+    border-left: 6px solid #F39C12;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    padding-left: 2rem;
+    margin: 2rem 0;
+}
+.tip-box.legal h6 {
+    color: #F39C12;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(243, 156, 18, 0.2);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+.tip-box.legal .icon { font-size: 1.4rem; margin-right: 0.5rem; vertical-align: middle; }
+.tip-box.legal strong { color: #F39C12; }
+/* Ajustement Light Mode */
+html[data-theme="light"] .tip-box.legal { background-color: #FFF8E1; border-color: #FFC107; }
+html[data-theme="light"] .tip-box.legal h6, html[data-theme="light"] .tip-box.legal strong { color: #D35400; }
