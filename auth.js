@@ -5,7 +5,7 @@
 // ⚠️ IMPORTANT : Remplacez cette URL par l'URL de votre site Netlify
 // Format : https://NOM-DU-SITE.netlify.app/.netlify/identity
 // Exemple : https://mon-site.netlify.app/.netlify/identity
-var API_URL = 'https://VOTRE-SITE.netlify.app/.netlify/identity';
+var API_URL = 'https://atelier-clarte-coach-business.netlify.app/.netlify/identity';
 
 (function () {
 
