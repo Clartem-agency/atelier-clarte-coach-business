@@ -6,14 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atelier Coach Business & Consulting</title>
 
-    <!-- Google Fonts: Poppins -->
+    <!-- Google Fonts: DM Serif Display + DM Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap"
         rel="stylesheet">
 
     <!-- Notre Feuille de Style -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Netlify Identity Widget pour l'authentification -->
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 
 <body>
@@ -22,6 +26,38 @@
     <button id="theme-switcher" class="theme-switcher" aria-label="Changer le thème">
         <span class="sun-icon" aria-hidden="true">☀️</span>
         <span class="moon-icon" aria-hidden="true">🌙</span>
+    </button>
+
+    <!-- ===== ÉCRAN DE CONNEXION ===== -->
+    <div id="login-gate" class="login-gate">
+        <div class="login-container">
+            <div class="login-glow"></div>
+            <img src="images/logo-clartem-blanc.png" alt="Logo Clartem" class="login-logo">
+            <div class="login-accent"></div>
+            <h2 class="login-title">Votre <em>Atelier de Clarté</em></h2>
+            <p class="login-subtitle">Connectez-vous pour accéder à votre espace personnel et commencer à donner vie à votre site.</p>
+
+            <!-- Formulaire de connexion intégré -->
+            <div id="login-form-wrapper">
+                <div class="login-form">
+                    <input type="email" id="login-email" class="login-input" placeholder="Votre adresse email" autocomplete="email">
+                    <input type="password" id="login-password" class="login-input" placeholder="Votre mot de passe" autocomplete="current-password">
+                    <p id="login-error" class="login-error" style="display: none;"></p>
+                    <button id="login-btn" class="login-button">
+                        <span class="login-btn-icon">✦</span>
+                        <span id="login-btn-text">Se connecter</span>
+                    </button>
+                </div>
+            </div>
+
+            <p class="login-footer">Un espace protégé, rien que pour vous.</p>
+        </div>
+    </div>
+    <!-- ===== FIN ÉCRAN DE CONNEXION ===== -->
+
+    <!-- Bouton de déconnexion (visible uniquement quand connecté) -->
+    <button id="logout-btn" class="logout-button" style="display: none;" aria-label="Se déconnecter">
+        <span>⎋</span> Déconnexion
     </button>
 
     <form name="atelier-clarte-coach-business" method="POST" data-netlify="true" enctype="multipart/form-data">
@@ -43,12 +79,14 @@
                         <img src="images/logo-clartem-blanc.png"
                             alt="Logo Clartem - Création de sites web pour coachs, consultants et formateurs"
                             class="logo">
+                        <div class="logo-accent"></div>
                     </header>
 
                     <div class="cover-content">
-                        <h1 class="main-title">Bienvenue dans Votre Atelier de Clarté</h1>
-                        <p class="subtitle">Le parcours stratégique pour bâtir votre plateforme d'expertise, un site qui
-                            inspire la confiance et génère des opportunités.</p>
+                        <h1 class="main-title">Bienvenue dans Votre<br><em>Atelier de Clarté</em></h1>
+                        <p class="subtitle">Le parcours stratégique pour bâtir votre plateforme d'expertise — un site
+                            qui
+                            inspire la confiance et génère des opportunités pour ceux qui ont besoin de vous.</p>
 
                         <div class="client-info">
                             <div class="info-item">
@@ -103,23 +141,23 @@
                             de l'accompagnement B2B. Si votre métier est de catalyser la réussite des autres, nous
                             parlons le même langage. Il est fait pour vous si vous êtes :</p>
                         <div class="audience-grid">
-                            <div class="audience-category">
+                            <div class="audience-category" data-num="01">
                                 <h4>Coaching d'entreprise</h4>
                                 <p>Coachs business, de dirigeants (executive coach), de carrière, d'équipe.</p>
                             </div>
-                            <div class="audience-category">
+                            <div class="audience-category" data-num="02">
                                 <h4>Consulting</h4>
                                 <p>Consultants indépendants (Marketing, Stratégie, Management, RH, IT, Finance...).</p>
                             </div>
-                            <div class="audience-category">
+                            <div class="audience-category" data-num="03">
                                 <h4>Formation</h4>
                                 <p>Formateurs professionnels indépendants, organismes de formation unipersonnels.</p>
                             </div>
-                            <div class="audience-category">
+                            <div class="audience-category" data-num="04">
                                 <h4>Performance de pointe</h4>
                                 <p>Coachs sportifs (athlètes professionnels, compétition), Préparateurs mentaux.</p>
                             </div>
-                            <div class="audience-category">
+                            <div class="audience-category" data-num="05">
                                 <h4>Conseil financier</h4>
                                 <p>Conseillers en gestion de patrimoine, Courtiers indépendants, Experts financiers.</p>
                             </div>
@@ -217,7 +255,7 @@
 
 
                     <div class="cta-container">
-                        <p class="ready-prompt">Prêt(e) à commencer ?</p>
+                        <p class="ready-prompt">Prêt(e) à poser les premières pierres ?</p>
                         <a href="#section-0-foundations" class="cta-button">Commencer l'Atelier de Clarté</a>
 
                         <div class="reset-container">
@@ -3311,7 +3349,8 @@
                                         placeholder="Ex: +33 6 12 34 56 78">
                                     <label for="contact-email">L'Adresse Email Professionnelle : <span
                                             class="label-example">Indispensable. Utilisez une adresse avec votre nom de
-                                            domaine (ex: contact@monsite.com) plutôt qu'une adresse
+                                            domaine (ex: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="75161a1b0114160135181a1b061c01105b161a18">[email&#160;protected]</a>)
+                                            plutôt qu'une adresse
                                             gmail.com.</span></label>
                                     <input type="text" id="contact-email" name="contact-email"
                                         placeholder="Ex: contact@votre-nom.com">
@@ -3763,7 +3802,7 @@
                                     <li>
                                         <h5>Étape 1 : Votre Envoi</h5>
                                         <p>Relisez une dernière fois ce guide. Quand vous êtes prêt(e), enregistrez-le
-                                            en PDF et envoyez-le moi par email à <strong>contact@clartem.com</strong>.
+                                            en PDF et envoyez-le moi par email à <strong>[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bdded2d3c9dcdec9fdded1dccfc9d8d093ded2d0">[email&#160;protected]</a>]</strong>.
                                         </p>
                                     </li>
                                     <li>
@@ -3804,7 +3843,7 @@
                                 <p>
                                     <strong>Frédéric Delavictoire</strong>
                                     <em>Agence Clartem</em><br>
-                                    www.clartem.com<br>
+                                    clartem.com<br>
                                 </p>
                             </div>
                         </div>
@@ -3834,6 +3873,8 @@
         </div>
     </div>
 
+    <!-- Script d'authentification (doit être chargé avant script.js) -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 
